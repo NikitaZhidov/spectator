@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  clickhouse:
+    image: yandex/clickhouse-server
+    container_name: db-spectator-clickhouse
+    volumes:
+      - './databases/clickhouse/config/config.xml:/etc/clickhouse-server/config.xml'
+      - './databases/clickhouse/config/users.xml:/etc/clickhouse-server/users.xml'
+      - './databases/clickhouse/data:/var/lib/clickhouse/'
+      - './databases/clickhouse/clickhouse-files:/var/lib/clickhouse-files'
+    ports:
+      - '8123:8123'
+
+  mongo:
+    image: mongo
+    container_name: db-spectator-mongo
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: default
+      MONGO_INITDB_ROOT_PASSWORD: qwerty
+    volumes:
+      - './databases/mongo/data:/data/db'
+      - './databases/mongo/mongo-files:/var/lib/mongo-files'
+      - './databases/mongo/config/mongod.conf:/etc/mongod.conf'

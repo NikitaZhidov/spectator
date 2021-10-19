@@ -1,0 +1,64 @@
+{
+	"root": true,
+	"ignorePatterns": ["**/*"],
+	"plugins": ["@nrwl/nx", "prettier"],
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+			"rules": {
+				"@nrwl/nx/enforce-module-boundaries": [
+					"error",
+					{
+						"enforceBuildableLibDependency": true,
+						"allow": [],
+						"depConstraints": [
+							{
+								"sourceTag": "*",
+								"onlyDependOnLibsWithTags": ["*"]
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"files": ["*.ts", "*.tsx"],
+			"extends": [
+				"airbnb",
+				"airbnb-typescript",
+				"airbnb/hooks",
+				"plugin:prettier/recommended"
+			],
+			"parserOptions": {
+				"project": "./tsconfig.base.json"
+			},
+			"rules": {
+				"import/no-named-as-default": 0,
+				"import/prefer-default-export": 0,
+				"react/jsx-one-expression-per-line": 0,
+				"react/jsx-indent": ["error", "tab"],
+				"react/react-in-jsx-scope": "off",
+				"prettier/prettier": [
+					"error",
+					{
+						"endOfLine": "auto"
+					}
+				],
+				"react/function-component-definition": [
+					"warn",
+					{ "namedComponents": "arrow-function" }
+				],
+				"class-methods-use-this": "off",
+				"no-underscore-dangle": "off",
+				"@typescript-eslint/prefer-readonly": "warn",
+				"@typescript-eslint/member-ordering": "warn",
+				"@typescript-eslint/lines-between-class-members": "off"
+			}
+		},
+		{
+			"files": ["*.js", "*.jsx"],
+			"extends": ["plugin:@nrwl/nx/javascript"],
+			"rules": {}
+		}
+	]
+}
