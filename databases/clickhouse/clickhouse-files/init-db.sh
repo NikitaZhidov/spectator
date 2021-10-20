@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+clickhouse client -n --password $CLICKHOUSE_PASSWORD --user $CLICKHOUSE_USER <<-EOSQL
+    CREATE TABLE IF NOT EXISTS $CLICKHOUSE_DB.$CLICKHOUSE_TABLE (x Int32) ENGINE = Log;
+EOSQL

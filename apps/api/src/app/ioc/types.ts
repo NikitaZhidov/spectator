@@ -4,4 +4,5 @@ export const TYPES = {
 	IAuthService: Symbol('IAuthService'),
 
 	IUserRepository: Symbol('IUserReposity'),
+	ISensorDataRepository: Symbol('ISensorDataRepository'),
 };

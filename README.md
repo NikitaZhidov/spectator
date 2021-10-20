@@ -1,72 +1,96 @@
-<b>Для запуска проекта с конфигурацией по умолчанию - пункты 4-7 можно пропустить</b>
+<h2>Установка проекта для разработки</h2>
+  <p>1. Скачать проект из репозитория (https://github.com/NikitaZhidov/spectator)</p>
 
-  <h2>1. Скачать проект из репозитория (https://github.com/NikitaZhidov/spectator)</h2>
-  git clone https://github.com/NikitaZhidov/spectator
+```shell
+git clone https://github.com/NikitaZhidov/spectator
+```
 
-  <h2>2. Установить Node.js и Docker</h2>
+  <p>2. Установить Node.js и Docker</p>
 	 <ul>
 		 <li>Docker - https://docs.docker.com/get-docker/</li>
 		 <li>Node.js - https://nodejs.org/en/ </li>
 	 </ul>
 
-  <h2>3. Установить необходимые зависимости в проекте. В корневой директории проекта необходимо в терминале ввести:</h2>
-  	<pre>npm i</pre>
+  <p>3. Установить необходимые зависимости в проекте. В корневой директории проекта необходимо в терминале ввести:</p>
 
-  <h2>4. Настроить конфигурацию баз данных.</h2>
-  <ul>
-    <li>Clickhouse - настройки базы данных в <b>databases/clickhouse/config</b> (users.xml - данные для входа, config.xml - остальное)</li>
-    <li>
-       MongoDB - настройки базы данных в <b>databases/mongo/config/mongodb.conf</b>. Данные для входа можно изменить в <b>docker-compose.yml</b>: переменные <i>MONGO_INITDB_ROOT_*</i> 
-<pre>
-environment:
-  MONGO_INITDB_ROOT_USERNAME: default
-  MONGO_INITDB_ROOT_PASSWORD: qwerty
-</pre> 
-   </li>
-   <li>
-     Порты для подключения к базам данных находятся в <b>docker-compose.yml</b> <br/>
-     Clickhouse по умолчанию - <b>8123</b> <br/>
-     MongoDB - <b>27017</b>
-<pre>
-ports:
-  - '8123:8123'
-ports:
-  - '27017:27017'
-</pre>
-   </li>
-  </ul>
-<strong>По умолчанию в проекте для MongoDB и Clickhouse имя пользователя: <i>default</i>, пароль: <i>qwerty</i></strong>
+```shell
+npm i
+```
 
-<h2>5. Настроить подключение к базам данных на сервере. Настройки хранятся в <b>apps/api/src/app/config/db.ts</b></h2>
-<pre>
-export const mongoConfig: IMongoConfig = {
-	hostname: 'localhost',
-	port: 27017,
-	username: 'default',
-	password: 'qwerty',
-	database: 'spectator',
+  <p> 4. Переименовать .env.sample в .env и задать свои настройки для приложения (или оставить по умолчанию):</p>
+
+```env
+MONGODB_HOST=localhost
+MONGODB_PORT=27017
+
+#Данные администратора(задаются только при первой инициализации данных)
+MONGO_INITDB_ROOT_USERNAME=default
+MONGO_INITDB_ROOT_PASSWORD=qwerty
+MONGO_INITDB_DATABASE=spectator
+
+CLICKHOUSE_HOST=localhost
+CLICKHOUSE_PORT=8123
+CLICKHOUSE_USER=default
+CLICKHOUSE_PASSWORD=qwerty
+#Имя используемой базы данных (создается, если не существует)
+CLICKHOUSE_DB=spectator
+#Имя таблицы в используемой базе данных (создается, если не существует)
+CLICKHOUSE_TABLE=sensorData
+
+SERVER_HOST=localhost
+SERVER_PORT=3333
+```
+
+
+<p>5. Конфиги серверов баз данных находятся в:</p>
+<ul>
+  <li>
+    databases/clickhouse/config/config.xml
+  </li>
+  <li>
+    databases/mongo/config/mongod.conf
+  </li>
+</ul>
+
+<p>6. Отредактировать скрипт для инициализации необходимой таблицы в ClickHouse (Для Mongo автоматически создаются необходимые в приложении таблицы) можно в файле <i>databases/clickhouse/clickhouse-files/init-db.sh</i>:</p>
+
+```shell
+#!/bin/bash
+set -e
+
+clickhouse client -n --password $CLICKHOUSE_PASSWORD --user $CLICKHOUSE_USER <<-EOSQL
+    CREATE TABLE IF NOT EXISTS $CLICKHOUSE_DB.$CLICKHOUSE_TABLE (x Int32) ENGINE = Log;
+EOSQL
+```
+
+<p> 7. При необходимости можно отредактировать конфиг подключения к базам данных в файле apps/api/src/app/config/db.ts</p>
+
+```typescript
+export const clickHouseConfig: IClickHouseConfig = {
+	url: process.env.CLICKHOUSE_HOST || 'localhost',
+	port: Number(process.env.CLICKHOUSE_PORT) || 8123,
+	debug: false,
+	basicAuth: {
+		username: process.env.CLICKHOUSE_USER || 'default',
+		password: process.env.CLICKHOUSE_PASSWORD || '',
+	},
+	format: 'json',
+	raw: false,
+	config: {
+		database: process.env.CLICKHOUSE_DB || 'spectator',
+	},
 };
-</pre>
 
-<h2>6. Настроить порт сервера в <b>apps/api/src/main.ts</b> (По умолчанию - 3333).</h2>
-<pre>
-const PORT = process.env.port || 3333;
-</pre>
+```
 
+<p>8. В корне проекта из терминала запустить необходимые докер контейнеры:</p>
 
-<h2>7. Настроить proxy.config.json (необходимо указать hostname и port сервера) в <b>apps/spectator/proxy.conf.json</b> (По умолчанию - "http://localhost:3333").</h2>
+```shell
+docker-compose up
+```
 
-<pre>
-{
-  "/api": {
-    "target": "http://localhost:3333",
-    "secure": false
-  }
-}
-</pre>
+<p>9. Запуск самого приложения (клиент и сервер):</p>
 
-<h2>8. В корне проекта из терминала запустить необходимые докер контейнеры:</h2>
-<pre>docker-compose up</pre>
-
-<h2>9. Запуск самого приложения (клиент и сервер):</h2>
-<pre>npm run dev</pre>
+```shell
+npm run dev
+```
