@@ -2,7 +2,7 @@ import { Response, Request, Router, NextFunction } from 'express';
 import { inject, injectable } from 'inversify';
 import { ApiResponse } from '@spectator/api-interfaces';
 import { IController } from '../core';
-import { IAuthService } from '../interfaces';
+import { IAuthService, ISensorDataRepository } from '../interfaces';
 import { TYPES } from '../ioc/types';
 import 'reflect-metadata';
 
@@ -12,13 +12,16 @@ class AuthController implements IController {
 	public router = Router();
 
 	constructor(
-		@inject(TYPES.IAuthService) private readonly _authService: IAuthService
+		@inject(TYPES.IAuthService) private readonly _authService: IAuthService,
+		@inject(TYPES.ISensorDataRepository)
+		private readonly _sensorDataRep: ISensorDataRepository
 	) {
 		this.initializeRoutes();
 	}
 
 	private initializeRoutes() {
 		this.router.get(`${this.path}/test`, this.TestGetMethod.bind(this));
+		this.router.get(`${this.path}/ch`, this.TestGetCHMethod.bind(this));
 		this.router.post(`${this.path}/test`, this.TestPostMethod.bind(this));
 	}
 
@@ -26,6 +29,19 @@ class AuthController implements IController {
 		try {
 			const users = await this._authService.TestGetUsersMethod();
 			return res.json(ApiResponse.Ok(users));
+		} catch (error) {
+			return next(error);
+		}
+	}
+
+	private async TestGetCHMethod(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
+		try {
+			const result = await this._sensorDataRep.FindAll();
+			return res.json(ApiResponse.Ok(result));
 		} catch (error) {
 			return next(error);
 		}

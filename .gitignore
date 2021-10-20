@@ -33,3 +33,5 @@ Thumbs.db
 
 databases/clickhouse/data
 databases/mongo/data
+
+.env

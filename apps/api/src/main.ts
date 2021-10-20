@@ -7,7 +7,7 @@ import { errorMiddleware, IController } from './app/core';
 import container from './app/ioc/inversify.config';
 import { TYPES } from './app/ioc/types';
 
-const PORT = process.env.port || 3333;
+const PORT = process.env.SERVER_PORT || 3333;
 
 class App {
 	public app: express.Application;

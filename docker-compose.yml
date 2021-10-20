@@ -6,20 +6,25 @@ services:
     container_name: db-spectator-clickhouse
     volumes:
       - './databases/clickhouse/config/config.xml:/etc/clickhouse-server/config.xml'
-      - './databases/clickhouse/config/users.xml:/etc/clickhouse-server/users.xml'
       - './databases/clickhouse/data:/var/lib/clickhouse/'
-      - './databases/clickhouse/clickhouse-files:/var/lib/clickhouse-files'
+      - './databases/clickhouse/clickhouse-files/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh'
     ports:
-      - '8123:8123'
+      - '${CLICKHOUSE_PORT}:${CLICKHOUSE_PORT}'
+    environment:
+      CLICKHOUSE_DB: '${CLICKHOUSE_DB}'
+      CLICKHOUSE_USER: '${CLICKHOUSE_USER}'
+      CLICKHOUSE_PASSWORD: '${CLICKHOUSE_PASSWORD}'
+      CLICKHOUSE_TABLE: '${CLICKHOUSE_TABLE}'
 
   mongo:
     image: mongo
     container_name: db-spectator-mongo
     ports:
-      - '27017:27017'
+      - '${MONGODB_PORT}:${MONGODB_PORT}'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: default
-      MONGO_INITDB_ROOT_PASSWORD: qwerty
+      MONGO_INITDB_ROOT_USERNAME: '${MONGO_INITDB_ROOT_USERNAME}'
+      MONGO_INITDB_ROOT_PASSWORD: '${MONGO_INITDB_ROOT_PASSWORD}'
+      MONGO_INITDB_DATABASE: '${MONGO_INITDB_DATABASE}'
     volumes:
       - './databases/mongo/data:/data/db'
       - './databases/mongo/mongo-files:/var/lib/mongo-files'

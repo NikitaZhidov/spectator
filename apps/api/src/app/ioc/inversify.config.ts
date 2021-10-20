@@ -3,8 +3,8 @@ import { IAuthService } from '../interfaces/serivces';
 import { AuthService } from '../services';
 import { TYPES } from './types';
 import AuthController from '../controllers/auth.controller';
-import { IUserRepository } from '../interfaces';
-import { UserRepository } from '../repositories';
+import { ISensorDataRepository, IUserRepository } from '../interfaces';
+import { SensorDataRepository, UserRepository } from '../repositories';
 
 const container = new Container();
 
@@ -21,6 +21,11 @@ container
 container
 	.bind<IUserRepository>(TYPES.IUserRepository)
 	.to(UserRepository)
+	.inSingletonScope();
+
+container
+	.bind<ISensorDataRepository>(TYPES.ISensorDataRepository)
+	.to(SensorDataRepository)
 	.inSingletonScope();
 
 export default container;
