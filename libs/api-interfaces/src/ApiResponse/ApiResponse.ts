@@ -9,7 +9,7 @@ class ApiResponse<T> implements IApiResponse<T> {
 	constructor(status: ResponseStatus, body: T, errors?: string[]) {
 		this.status = status;
 		this.body = body;
-		this.errors = errors;
+		this.errors = errors || [];
 	}
 
 	public static Ok<T>(body: T) {

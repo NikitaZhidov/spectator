@@ -40,4 +40,44 @@ export const themeOptions: ThemeOptions = {
 	},
 };
 
-export const MainTheme = createTheme(themeOptions);
+export const lightThemeOptions: ThemeOptions = {
+	palette: {
+		primary: {
+			light: '#3f51b5',
+			main: '#3f51b6',
+			dark: '#28282a',
+		},
+		secondary: {
+			light: '#fff5f8',
+			main: '#f50057',
+			dark: '#28282a',
+		},
+		warning: {
+			main: '#ffc071',
+			dark: '#ffb25e',
+		},
+		error: {
+			light: red[50],
+			main: red[500],
+			dark: red[700],
+		},
+		success: {
+			light: green[50],
+			main: green[500],
+			dark: green[700],
+		},
+		background: {
+			default: '#fafafa',
+			paper: '#fff',
+		},
+	},
+	typography: {
+		fontFamily: "'Work Sans', sans-serif",
+		fontSize: 14,
+		fontWeightLight: 300, // Work Sans
+		fontWeightRegular: 400, // Work Sans
+		fontWeightMedium: 700, // Roboto Condensed
+	},
+};
+
+export const MainTheme = createTheme(lightThemeOptions);
