@@ -1,4 +1,4 @@
 export class AppRoutes {
 	static readonly Main = '/';
-	static readonly CreatePlan = '/create/plan';
+	static readonly PlanCreate = '/plan/create';
 }
