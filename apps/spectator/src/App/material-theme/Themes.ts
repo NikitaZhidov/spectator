@@ -27,6 +27,9 @@ export const themeOptions: ThemeOptions = {
 			main: green[500],
 			dark: green[700],
 		},
+		background: {
+			default: '#1e1e1f',
+		},
 	},
 	typography: {
 		fontFamily: "'Work Sans', sans-serif",
