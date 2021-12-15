@@ -3,14 +3,28 @@ import { IAuthService } from '../interfaces/serivces';
 import { AuthService } from '../services';
 import { TYPES } from './types';
 import AuthController from '../controllers/auth.controller';
-import { ISensorDataRepository, IUserRepository } from '../interfaces';
-import { SensorDataRepository, UserRepository } from '../repositories';
+import {
+	IPlanRepository,
+	ISensorDataRepository,
+	IUserRepository,
+} from '../interfaces';
+import {
+	PlanRepository,
+	SensorDataRepository,
+	UserRepository,
+} from '../repositories';
+import { PlanController } from '../controllers';
 
 const container = new Container();
 
 container
 	.bind<IAuthService>(TYPES.IAuthService)
 	.to(AuthService)
+	.inSingletonScope();
+
+container
+	.bind<PlanController>(TYPES.PlanController)
+	.to(PlanController)
 	.inSingletonScope();
 
 container
@@ -26,6 +40,11 @@ container
 container
 	.bind<ISensorDataRepository>(TYPES.ISensorDataRepository)
 	.to(SensorDataRepository)
+	.inSingletonScope();
+
+container
+	.bind<IPlanRepository>(TYPES.IPlanRepository)
+	.to(PlanRepository)
 	.inSingletonScope();
 
 export default container;

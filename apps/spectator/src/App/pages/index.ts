@@ -1,2 +1,3 @@
 export * from './CreatePlanPage';
-export * from './MainPage';
+export * from './EditPlanPage';
+export * from './WatchPlanPage';
