@@ -5,6 +5,7 @@ export interface FigureInfo {
 	type: FigureType;
 	begin: Position;
 	end: Position;
+	title: string;
 	transform?: string;
 	rotate?: number;
 	color?: string;

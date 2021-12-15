@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { FigureInfo, FigureType } from '@spectator/api-interfaces';
+import { useTheme } from '@material-ui/core';
 
 const getHalfFigureSide = (
 	value: string | number | undefined
@@ -30,6 +31,7 @@ export interface FigureProps extends FigureInfo {
 	bgBorderColor?: string;
 	showResizePoints?: boolean;
 	resizePointsSize?: number;
+	showTitleOnHover?: boolean;
 }
 
 export const Figure: React.FC<FigureProps> = ({
@@ -47,8 +49,10 @@ export const Figure: React.FC<FigureProps> = ({
 	id,
 	showResizePoints,
 	resizePointsSize,
+	title,
 }: FigureProps) => {
 	const ellipse$: React.Ref<SVGEllipseElement> = useRef(null);
+	const theme = useTheme();
 
 	const onClickFigure = useCallback(() => {
 		if (onClick) {
@@ -61,9 +65,21 @@ export const Figure: React.FC<FigureProps> = ({
 				color,
 				strokeWidth,
 				id,
+				title,
 			});
 		}
-	}, [begin, color, end, id, onClick, rotate, strokeWidth, transform, type]);
+	}, [
+		begin,
+		color,
+		end,
+		id,
+		onClick,
+		rotate,
+		strokeWidth,
+		transform,
+		type,
+		title,
+	]);
 
 	const getFigureByType = (figureType: FigureType) => {
 		switch (figureType) {
@@ -92,7 +108,7 @@ export const Figure: React.FC<FigureProps> = ({
 						y2={end.y}
 						strokeWidth={strokeWidth || 3}
 						fill="white"
-						stroke={showBgSize ? stroke : 'black'}
+						stroke="black"
 					/>
 				);
 			default:
@@ -136,14 +152,14 @@ export const Figure: React.FC<FigureProps> = ({
 						cy={begin.y}
 						rx={(resizePointsSize || 0) / 2}
 						ry={(resizePointsSize || 0) / 2}
-						fill="#fff"
+						fill={theme.palette.primary.dark}
 					/>
 					<ellipse
 						cx={end.x}
 						cy={end.y}
 						rx={(resizePointsSize || 0) / 2}
 						ry={(resizePointsSize || 0) / 2}
-						fill="#fff"
+						fill={theme.palette.primary.dark}
 					/>
 					{type !== FigureType.line && (
 						<>
@@ -152,14 +168,14 @@ export const Figure: React.FC<FigureProps> = ({
 								cy={begin.y}
 								rx={(resizePointsSize || 0) / 2}
 								ry={(resizePointsSize || 0) / 2}
-								fill="#fff"
+								fill={theme.palette.primary.dark}
 							/>
 							<ellipse
 								cx={begin.x}
 								cy={end.y}
 								rx={(resizePointsSize || 0) / 2}
 								ry={(resizePointsSize || 0) / 2}
-								fill="#fff"
+								fill={theme.palette.primary.dark}
 							/>
 						</>
 					)}

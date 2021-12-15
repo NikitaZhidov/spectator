@@ -1,21 +1,21 @@
 import { useTheme, Box } from '@material-ui/core';
 import { FigureInfo } from '@spectator/api-interfaces';
 import React from 'react';
-import { Figure } from '../../hoc';
 import { GRID_SIZE } from '../../utils';
+import { Figure } from '../figure';
 import { PlanGrid } from './PlanGrid';
 
 export interface PlanProps {
 	widthInPx: number;
 	heightInPx: number;
-	editingBufferFigure: FigureInfo | null;
+	editingBufferFigure?: FigureInfo | null;
 	createdFigures: FigureInfo[];
-	itemRef: React.RefObject<HTMLDivElement>;
+	itemRef?: React.RefObject<HTMLDivElement>;
 	showGrid?: boolean;
 	editingFigure?: FigureInfo;
 	resizePointsSize?: number;
 	onClickBgPlan?: () => void;
-	onClickFigure: (figure: FigureInfo) => void;
+	onClickFigure?: (figure: FigureInfo) => void;
 }
 
 export const Plan: React.FC<PlanProps> = ({
@@ -45,7 +45,9 @@ export const Plan: React.FC<PlanProps> = ({
 				width={`${widthInPx}px`}
 				height={`${heightInPx}px`}
 				borderRadius="10px"
-				bgcolor={`${theme.palette.primary.dark}`}
+				bgcolor={`${theme.palette.background.default}`}
+				border={`1px solid ${theme.palette.secondary.dark}`}
+				overflow="hidden"
 			>
 				<svg width="100%" height="100%">
 					<PlanGrid
@@ -57,11 +59,14 @@ export const Plan: React.FC<PlanProps> = ({
 					{createdFigures.map((cf) => {
 						return (
 							<Figure
+								title={cf.title}
 								showResizePoints={editingFigure?.id === cf.id}
 								resizePointsSize={resizePointsSize}
 								stroke={theme.palette.secondary.light}
 								id={cf.id}
-								showBgSize={cf.id === editingFigure?.id}
+								showBgSize={
+									editingFigure?.id ? cf.id === editingFigure?.id : false
+								}
 								bgBorderColor={theme.palette.secondary.dark}
 								onClick={onClickFigure}
 								key={`${cf.begin.x}_${cf.end.x}_${cf.type}_${cf.id}`}
@@ -73,6 +78,7 @@ export const Plan: React.FC<PlanProps> = ({
 					})}
 					{editingBufferFigure && (
 						<Figure
+							title=""
 							id={editingBufferFigure.id}
 							color="rgb(90%, 16%, 35%, .2)"
 							onClick={onClickFigure}

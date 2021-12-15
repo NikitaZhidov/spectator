@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 import * as express from 'express';
+import * as cors from 'cors';
 import { connect } from 'mongoose';
 import { mongoConfig } from './app/config/db';
-import { AuthController } from './app/controllers';
+import { AuthController, PlanController } from './app/controllers';
 import { errorMiddleware, IController } from './app/core';
 import container from './app/ioc/inversify.config';
 import { TYPES } from './app/ioc/types';
@@ -29,6 +30,7 @@ class App {
 	}
 
 	private initializeMiddlewares() {
+		this.app.use(cors());
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: true }));
 	}
@@ -55,6 +57,9 @@ class App {
 	}
 }
 
-const mainApp = new App([container.get<AuthController>(TYPES.AuthController)]);
+const mainApp = new App([
+	container.get<PlanController>(TYPES.PlanController),
+	container.get<AuthController>(TYPES.AuthController),
+]);
 
 mainApp.listen();

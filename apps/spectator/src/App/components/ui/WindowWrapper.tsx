@@ -19,7 +19,7 @@ export const WindowWrapper: React.FC<WindowWrapperProps> = ({
 				width: '100%',
 				height: '100%',
 				borderRadius: '15px',
-				bgcolor: theme.palette.primary.main,
+				bgcolor: theme.palette.background.paper || theme.palette.primary.main,
 				color: theme.palette.secondary.light,
 				padding: '20px',
 			}}

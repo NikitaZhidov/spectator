@@ -13,9 +13,13 @@ export const Header: React.FC = () => {
 
 	return (
 		<AppBar position="static" style={{ marginBottom: '20px' }}>
-			<Tabs value={location.pathname} onChange={handleChangeRoute} centered>
-				<Tab label="Главная" value={AppRoutes.Main} />
+			<Tabs
+				value={AppRoutes.isMainAppRoute(location.pathname) && location.pathname}
+				onChange={handleChangeRoute}
+				centered
+			>
 				<Tab label="Создать план помещения" value={AppRoutes.PlanCreate} />
+				<Tab label="Просмотреть планы" value={AppRoutes.Plan} />
 			</Tabs>
 		</AppBar>
 	);
