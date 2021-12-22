@@ -1,78 +1,78 @@
+import { validationResult } from 'express-validator';
+
 import { Response, Request, Router, NextFunction } from 'express';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import { ApiResponse } from '@spectator/api-interfaces';
 import { IController } from '../core';
-import { IAuthService, ISensorDataRepository } from '../interfaces';
-import { TYPES } from '../ioc/types';
+
 import 'reflect-metadata';
+import { UserModel } from '../models';
 
 @injectable()
 class AuthController implements IController {
 	public path = '/auth';
 	public router = Router();
 
-	constructor(
-		@inject(TYPES.IAuthService) private readonly _authService: IAuthService,
-		@inject(TYPES.ISensorDataRepository)
-		private readonly _sensorDataRep: ISensorDataRepository
-	) {
+	constructor() {
 		this.initializeRoutes();
 	}
 
 	private initializeRoutes() {
-		this.router.get(`${this.path}/test`, this.TestGetMethod.bind(this));
-		this.router.get(`${this.path}/ch`, this.TestGetCHMethod.bind(this));
-		this.router.post(`${this.path}/test`, this.TestPostMethod.bind(this));
+		this.router.post(`${this.path}/register`, this.RegisterUser.bind(this));
+
+		this.router.get(`${this.path}/user`, this.GetAllUsers.bind(this));
 	}
 
-	private async TestGetMethod(req: Request, res: Response, next: NextFunction) {
+	private async RegisterUser(req: Request, res: Response, next: NextFunction) {
 		try {
-			const users = await this._authService.TestGetUsersMethod();
+			const errors = validationResult(req);
+
+			if (!errors.isEmpty()) {
+				return res.status(400).json({
+					errors: errors.array(),
+					message: 'Некорректные данные при регистрации',
+				});
+			}
+
+			const { login, password } = req.body.newAccount;
+
+			const candidate = await UserModel.findOne({ login });
+
+			if (candidate) {
+				return res
+					.status(400)
+					.json({ message: 'Такой пользователь уже существует' });
+			}
+
+			const hashedPass = await this._hashCode(password);
+			const user = new UserModel({ login, password: hashedPass });
+
+			await user.save();
+
+			return res.json(ApiResponse.Ok(candidate));
+		} catch (error) {
+			return next(error);
+		}
+	}
+
+	private async GetAllUsers(req: Request, res: Response, next: NextFunction) {
+		try {
+			const users = await UserModel.find({});
 			return res.json(ApiResponse.Ok(users));
 		} catch (error) {
 			return next(error);
 		}
 	}
 
-	private async TestGetCHMethod(
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) {
-		try {
-			const result = await this._sensorDataRep.FindAll();
-			return res.json(ApiResponse.Ok(result));
-		} catch (error) {
-			return next(error);
-		}
-	}
+	private _hashCode(str: string): number {
+		let h: number = 0;
 
-	private async TestPostMethod(
-		req: Request,
-		res: Response,
-		next: NextFunction
-	) {
-		try {
-			const { email, password } = req.body;
-			if (
-				email === undefined ||
-				email.trim() === '' ||
-				password === undefined ||
-				password === ''
-			) {
-				return next(
-					ApiResponse.BadReqest(null, ['Некорректый логин и пароль'])
-				);
-			}
-
-			const user = await this._authService.TestCreateUserMethod(
-				email,
-				password
-			);
-			return res.json(ApiResponse.Ok(user));
-		} catch (error) {
-			return next(error);
+		// eslint-disable-next-line no-plusplus
+		for (let i = 0; i < str.length; i++) {
+			h = 31 * h + str.charCodeAt(i);
 		}
+		// eslint-disable-next-line no-bitwise
+		return h & 0xffffffff;
 	}
 }
 
