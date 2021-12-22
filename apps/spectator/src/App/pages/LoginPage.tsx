@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Paper, Grid, TextField, Button } from '@material-ui/core';
 import { AccountCircle, Lock } from '@material-ui/icons';
 import { useLocation } from 'react-router-dom';
-// import { render } from 'react-dom';
 import { User } from '@spectator/api-interfaces';
 import { accountApi } from '../api/accountApi';
 
@@ -16,6 +15,12 @@ export const LoginPage: React.FC = () => {
 	const [password2, setPassword2] = useState('');
 	const [pass2THelper, setPass2THelper] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
+
+	const [users, setUsers] = useState<User[]>([]);
+
+	useEffect(() => {
+		accountApi.getUsers().then(setUsers);
+	}, []);
 
 	const showErrorMessage = (message: string) => {
 		setErrorMessage(message);
@@ -31,20 +36,6 @@ export const LoginPage: React.FC = () => {
 			});
 		} catch (error) {
 			showErrorMessage('Ошибка регистрации');
-		}
-
-		return res;
-	};
-
-	const authAcc = async (log: string, pass: string) => {
-		let res: null | User = null;
-		try {
-			res = await accountApi.authUser({
-				login: log,
-				password: pass,
-			});
-		} catch (error) {
-			showErrorMessage('Ошибка авторизации');
 		}
 
 		return res;
@@ -83,14 +74,10 @@ export const LoginPage: React.FC = () => {
 		regAcc(login, password1);
 	};
 
-	const handleSubmitAuth = async (e: { preventDefault: () => void }) => {
-		e.preventDefault();
-		authAcc(login, password1);
-	};
-
 	if (errorMessage.length > 0) {
 		return <div style={{ color: 'red' }}>{errorMessage}</div>;
 	}
+
 	if (typeLog === 'reg') {
 		return (
 			<>
@@ -162,59 +149,12 @@ export const LoginPage: React.FC = () => {
 						</div>
 					</Paper>
 				</form>
+				{users.map((u, i) => {
+					return <div key={`${login}_${i * 10}`}>{u.login}</div>;
+				})}
 			</>
 		);
 	}
-	if (typeLog === 'auth') {
-		return (
-			<>
-				<form onSubmit={handleSubmitAuth}>
-					<Paper>
-						<div>
-							<Grid container spacing={3} alignItems="flex-end">
-								<Grid item>
-									<AccountCircle fontSize="large" />
-								</Grid>
-								<Grid item md sm xs>
-									<TextField
-										id="username"
-										label="Username"
-										type="text"
-										fullWidth
-										autoFocus
-										required
-									/>
-								</Grid>
-							</Grid>
-							<Grid container spacing={3} alignItems="flex-end">
-								<Grid item>
-									<Lock fontSize="large" />
-								</Grid>
-								<Grid item md sm xs>
-									<TextField
-										id="password"
-										label="Password"
-										type="password"
-										fullWidth
-										required
-									/>
-								</Grid>
-							</Grid>
-							<Grid container justify="center" style={{ marginTop: '10px' }}>
-								<Button
-									variant="outlined"
-									color="primary"
-									style={{ textTransform: 'none' }}
-									type="submit"
-								>
-									Login
-								</Button>
-							</Grid>
-						</div>
-					</Paper>
-				</form>
-			</>
-		);
-	}
+
 	return <div>Something Wrong...</div>;
 };

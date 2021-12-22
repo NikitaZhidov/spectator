@@ -29,7 +29,6 @@ export const Header: React.FC = () => {
 				<Tab label="Просмотреть планы" value={AppRoutes.Plan} />
 				<ButtonGroup variant="contained">
 					<Button onClick={() => handleClick('reg')}>Регистрация</Button>
-					<Button onClick={() => handleClick('auth')}>Авторизация</Button>
 				</ButtonGroup>
 			</Tabs>
 		</AppBar>
