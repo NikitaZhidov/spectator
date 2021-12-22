@@ -3,6 +3,7 @@ export class AppRoutes {
 	static readonly PlanCreate = '/plan/create';
 	static readonly PlanEdit = '/plan/edit/:id';
 	static readonly PlanWithId = '/plan/:id';
+	static readonly Login = '/login';
 
 	static RouteToPlanEdit(id: string) {
 		return AppRoutes.PlanEdit.replace(':id', id);

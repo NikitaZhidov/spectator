@@ -7,7 +7,6 @@ export const planApi = {
 			const res = await baseAxios.post<ApiResponse<PlanData>>('/plan', {
 				planToCreate,
 			});
-
 			return res.data.body;
 		} catch (error) {
 			throw new Error('Plan creating post error');

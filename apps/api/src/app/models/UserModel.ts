@@ -2,7 +2,7 @@ import { model, Schema } from 'mongoose';
 import { User } from '@spectator/api-interfaces';
 
 const schema = new Schema<User>({
-	email: { type: String, required: true },
+	login: { type: String, required: true },
 	password: { type: String, required: true },
 });
 

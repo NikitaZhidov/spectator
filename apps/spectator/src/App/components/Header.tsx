@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { AppBar, Tab, Tabs } from '@material-ui/core';
+import { AppBar, Button, ButtonGroup, Tab, Tabs } from '@material-ui/core';
 import { useLocation, useHistory } from 'react-router-dom';
 import { AppRoutes } from '../constants';
 
@@ -11,6 +11,13 @@ export const Header: React.FC = () => {
 		history.push(value);
 	};
 
+	const handleClick = (typeLog: string) => {
+		history.push({
+			pathname: AppRoutes.Login,
+			state: typeLog,
+		});
+	};
+
 	return (
 		<AppBar position="static" style={{ marginBottom: '20px' }}>
 			<Tabs
@@ -20,6 +27,10 @@ export const Header: React.FC = () => {
 			>
 				<Tab label="Создать план помещения" value={AppRoutes.PlanCreate} />
 				<Tab label="Просмотреть планы" value={AppRoutes.Plan} />
+				<ButtonGroup variant="contained">
+					<Button onClick={() => handleClick('reg')}>Регистрация</Button>
+					<Button onClick={() => handleClick('auth')}>Авторизация</Button>
+				</ButtonGroup>
 			</Tabs>
 		</AppBar>
 	);
