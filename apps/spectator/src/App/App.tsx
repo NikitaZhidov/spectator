@@ -4,7 +4,12 @@ import { Switch as RouterSwitch, Route } from 'react-router-dom';
 import { Header } from './components';
 import { AppRoutes } from './constants';
 import { MainTheme } from './material-theme/Themes';
-import { CreatePlanPage, EditPlanPage, WatchPlanPage } from './pages';
+import {
+	CreatePlanPage,
+	EditPlanPage,
+	WatchPlanPage,
+	LoginPage,
+} from './pages';
 
 import './styles/styles.scss';
 
@@ -29,6 +34,10 @@ export const App: React.FC = () => {
 
 					<Route path={AppRoutes.PlanWithId} exact>
 						<WatchPlanPage />
+					</Route>
+
+					<Route path={AppRoutes.Login} exact>
+						<LoginPage />
 					</Route>
 				</RouterSwitch>
 			</Container>
