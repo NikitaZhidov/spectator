@@ -86,7 +86,7 @@ describe('PlanRepository:', () => {
 			const allPlans = await planRepository.GetAll();
 
 			// 1 существующий (при инициализации beforeAll) + 2
-			expect(allPlans.length).toBe(3);
+			expect(allPlans.length).toBe(2);
 			expect(allPlans[1].id).toBe(plan.id);
 			expect(allPlans[2].id).toBe(plan2.id);
 
